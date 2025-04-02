@@ -2,33 +2,30 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\DTOs\PokemonRequestDTO;
 use App\Application\DTOs\PokemonsResponseDTO;
-use App\Application\Interfaces\ListPokemonUseCaseInterface;
+use App\Application\DTOs\SearchPokemonRequestDTO;
 use App\Application\Interfaces\PokemonListItemDTOFactoryInterface;
 use App\Application\Interfaces\PokemonsResponseDTOFactoryInterface;
-use App\Domain\Entities\Pokemon;
+use App\Application\Interfaces\SearchPokemonByTypeUseCaseInterface;
 use App\Domain\Repositories\PokemonRepositoryInterface;
 
-class ListPokemonUseCase implements ListPokemonUseCaseInterface
+class SearchPokemonByTypeUseCase implements SearchPokemonByTypeUseCaseInterface
 {
     public function __construct(
-        private PokemonRepositoryInterface $pokemonRepositoryInterface,
+        private PokemonRepositoryInterface $pokemonRepository,
         private PokemonListItemDTOFactoryInterface $pokemonListItemDTOFactoryInterface,
         private PokemonsResponseDTOFactoryInterface $pokemonsResponseDTOFactoryInterface,
     ) {}
 
-    public function execute(PokemonRequestDTO $pokemonDTO): PokemonsResponseDTO
+    public function execute(SearchPokemonRequestDTO $searchPokemonRequestDTO): ?PokemonsResponseDTO
     {
-        $pokemonPaginatedData = $this->pokemonRepositoryInterface->getAllPaginated(
-            page: $pokemonDTO->page,
-            perPage: $pokemonDTO->perPage,
-        );
+        $pokemonsResponse = $this->pokemonRepository->getByType($searchPokemonRequestDTO->type);
 
-        $pokemons = $pokemonPaginatedData['pokemons'];
-        $total = $pokemonPaginatedData['total'];
+        if (!$pokemonsResponse) {
+            return null;
+        }
 
-        $pokemonProcessedData = array_map(function (Pokemon $pokemon) {
+        $pokemonProcessedData = array_map(function ($pokemon) {
             $pokemonData = [
                 'id' => $pokemon->getId(),
                 'name' => $pokemon->getName(),
@@ -38,13 +35,11 @@ class ListPokemonUseCase implements ListPokemonUseCaseInterface
             ];
 
             return $this->pokemonListItemDTOFactoryInterface->create($pokemonData);
-        }, $pokemons);
+        }, $pokemonsResponse);
 
         return $this->pokemonsResponseDTOFactoryInterface->create(
             $pokemonProcessedData,
-            $total,
-            $pokemonDTO->page,
-            $pokemonDTO->perPage
+            total: count($pokemonProcessedData),
         );
     }
 }

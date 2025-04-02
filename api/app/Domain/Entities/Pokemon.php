@@ -44,6 +44,6 @@ class Pokemon
 
     public function getHeightInCentimeters(): float
     {
-        return $this->getHeight() * 100;
+        return $this->getHeight() * 10;
     }
 }
