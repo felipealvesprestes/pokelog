@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Application\Interfaces\GetPokemonByIdUseCaseInterface;
 use App\Application\Interfaces\ListPokemonUseCaseInterface;
 use App\Application\Interfaces\PokemonListItemDTOFactoryInterface;
 use App\Application\Interfaces\PokemonRequestDTOFactoryInterface;
@@ -10,6 +11,7 @@ use App\Application\Interfaces\PokemonsResponseDTOFactoryInterface;
 use App\Application\Interfaces\SearchPokemonRequestDTOFactoryInterface;
 use App\Application\Interfaces\SearchPokemonByNameUseCaseInterface;
 use App\Application\Interfaces\SearchPokemonByTypeUseCaseInterface;
+use App\Application\UseCases\GetPokemonByIdUseCase;
 use App\Application\UseCases\ListPokemonUseCase;
 use App\Application\UseCases\SearchPokemonByNameUseCase;
 use App\Application\UseCases\SearchPokemonByTypeUseCase;
@@ -42,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PokemonListItemDTOFactoryInterface::class, PokemonListItemDTOFactory::class);
         $this->app->bind(PokemonsResponseDTOFactoryInterface::class, PokemonsResponseDTOFactory::class);
         $this->app->bind(PokemonResponseDTOFactoryInterface::class, PokemonResponseDTOFactory::class);
+        $this->app->bind(GetPokemonByIdUseCaseInterface::class, GetPokemonByIdUseCase::class);
 
         $this->app->bind(PokeApiService::class, function ($app) {
             return new PokeApiService();

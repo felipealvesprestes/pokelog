@@ -72,4 +72,21 @@ class PokeApiService
 
         return $data;
     }
+
+    public function getById(int $id)
+    {
+        $response = Http::get($this->baseUrl . '/pokemon/' . $id);
+
+        if ($response->failed()) {
+            return null;
+        }
+
+        $data = $response->json();
+
+        if (isset($data['types'])) {
+            $data['types'] = array_map(fn($type) => $type['type']['name'], $data['types']);
+        }
+
+        return $data;
+    }
 }

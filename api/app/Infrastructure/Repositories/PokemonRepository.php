@@ -84,6 +84,17 @@ class PokemonRepository implements PokemonRepositoryInterface
         return $pokemons;
     }
 
+    public function getById(int $id): ?Pokemon
+    {
+        $details = $this->pokeApiService->getById($id);
+
+        if ($details) {
+            return $this->pokemonEntityFactory($details);
+        }
+
+        return null;
+    }
+
     private function pokemonEntityFactory(array $detailsPokemon): Pokemon
     {
         return $this->pokemonEntityFactoryInterface->create(

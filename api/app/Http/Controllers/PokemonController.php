@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\Interfaces\GetPokemonByIdUseCaseInterface;
 use App\Application\Interfaces\ListPokemonUseCaseInterface;
 use App\Application\Interfaces\PokemonRequestDTOFactoryInterface;
 use App\Application\Interfaces\SearchPokemonRequestDTOFactoryInterface;
@@ -18,6 +19,7 @@ class PokemonController extends Controller
         private SearchPokemonRequestDTOFactoryInterface $searchPokemonRequestDTOFactory,
         private SearchPokemonByNameUseCaseInterface $searchPokemonByNameUseCase,
         private SearchPokemonByTypeUseCaseInterface $searchPokemonByTypeUseCase,
+        private GetPokemonByIdUseCaseInterface $getPokemonByIdUseCaseInterface,
     ) {}
 
     public function index(Request $resquest): JsonResponse
@@ -52,5 +54,16 @@ class PokemonController extends Controller
         return response()->json([
             'message' => 'Pokemon não encontrado',
         ], 404);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $pokemonDetailsDTO = $this->getPokemonByIdUseCaseInterface->execute($id);
+
+        if ($pokemonDetailsDTO) {
+            return response()->json($pokemonDetailsDTO->toArray());
+        } else {
+            return response()->json(['message' => 'Pokémon não encontrado'], 404);
+        }
     }
 }
