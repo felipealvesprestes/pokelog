@@ -6,7 +6,7 @@ const store = createStore({
       pokemons: [],
       totalPokemons: 0,
       currentPage: 1,
-      perPage: 10,
+      perPage: 12,
       searchTerm: '',
       searchType: 'name',
       isSearching: false,
