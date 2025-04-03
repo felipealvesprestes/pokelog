@@ -1,24 +1,44 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 
 const store = createStore({
-  state () {
+  state() {
     return {
-        pokemons: {}
-    }
+      pokemons: [],
+      totalPokemons: 0,
+      currentPage: 1,
+      perPage: 10,
+    };
   },
   mutations: {
-    setPokemons(state, pokemons) {
-      state.pokemons = pokemons
-    }
+    setPokemonsData(state, data) {
+      state.pokemons = data.pokemons;
+      state.totalPokemons = data.total;
+      state.currentPage = data.page;
+      state.perPage = data.perPage;
+    },
+    setCurrentPage(state, page) {
+      state.currentPage = page;
+    },
   },
   actions: {
-    async getPokemons({ commit }, url) {
-      const response = await fetch(url).then(response => response)
-      const pokemonsData = await response.json()
+    async getPokemons({ commit, state }, page = 1) {
+      const url = `http://localhost/api/pokemons?page=${page}&perPage=${state.perPage}`;
 
-      commit('setPokemons', pokemonsData)
-    }
-  }
-})
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        commit('setPokemonsData', data);
+      } catch (error) {
+        console.error('Erro ao buscar Pokémons:', error);
+      }
+    },
+    changePage({ dispatch }, page) {
+      dispatch('getPokemons', page);
+    },
+  },
+  getters: {
+    totalPages: (state) => Math.ceil(state.totalPokemons / state.perPage),
+  },
+});
 
-export default store
+export default store;
