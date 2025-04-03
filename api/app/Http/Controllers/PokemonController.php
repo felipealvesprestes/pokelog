@@ -8,6 +8,7 @@ use App\Application\Interfaces\PokemonRequestDTOFactoryInterface;
 use App\Application\Interfaces\SearchPokemonRequestDTOFactoryInterface;
 use App\Application\Interfaces\SearchPokemonByNameUseCaseInterface;
 use App\Application\Interfaces\SearchPokemonByTypeUseCaseInterface;
+use App\Domain\Repositories\PokemonRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -20,13 +21,14 @@ class PokemonController extends Controller
         private SearchPokemonByNameUseCaseInterface $searchPokemonByNameUseCase,
         private SearchPokemonByTypeUseCaseInterface $searchPokemonByTypeUseCase,
         private GetPokemonByIdUseCaseInterface $getPokemonByIdUseCaseInterface,
+        private PokemonRepositoryInterface $pokemonRepositoryInterface,
     ) {}
 
-    public function index(Request $resquest): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $pokemonRequest = [
-            'page' => $resquest->query('page', 1),
-            'perPage' => $resquest->query('perPage', 12),
+            'page' => $request->query('page', 1),
+            'perPage' => $request->query('perPage', 12),
         ];
 
         $pokemonRequestDTO = $this->pokemonRequestDTOFactoryInterface->create($pokemonRequest);
@@ -37,13 +39,18 @@ class PokemonController extends Controller
 
     public function search(Request $request): JsonResponse
     {
-        if ($request->query('name')) {
-            $searchPokemonRequestDTO = $this->searchPokemonRequestDTOFactory->create($request->toArray());
+        $searchParams = [
+            'name' => $request->query('name'),
+            'type' => $request->query('type'),
+        ];
+
+        $searchPokemonRequestDTO = $this->searchPokemonRequestDTOFactory->create($searchParams);
+
+        if ($searchPokemonRequestDTO->name) {
             $pokemonResponseDTO = $this->searchPokemonByNameUseCase->execute($searchPokemonRequestDTO);
         }
 
-        if ($request->query('type')) {
-            $searchPokemonRequestDTO = $this->searchPokemonRequestDTOFactory->create($request->toArray());
+        if ($searchPokemonRequestDTO->type) {
             $pokemonResponseDTO = $this->searchPokemonByTypeUseCase->execute($searchPokemonRequestDTO);
         }
 

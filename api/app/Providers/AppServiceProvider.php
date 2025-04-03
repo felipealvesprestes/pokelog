@@ -23,7 +23,7 @@ use App\Infrastructure\Factories\PokemonRequestDTOFactory;
 use App\Infrastructure\Factories\PokemonResponseDTOFactory;
 use App\Infrastructure\Factories\PokemonsResponseDTOFactory;
 use App\Infrastructure\Factories\SearchPokemonRequestDTOFactory;
-use App\Infrastructure\Repositories\PokemonRepository;
+use App\Infrastructure\Persistences\Eloquent\EloquentPokemonRepository;
 use App\Infrastructure\Services\PokeApiService;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ListPokemonUseCaseInterface::class, ListPokemonUseCase::class);
         $this->app->bind(PokemonRequestDTOFactoryInterface::class, PokemonRequestDTOFactory::class);
-        $this->app->bind(PokemonRepositoryInterface::class, PokemonRepository::class);
+        $this->app->bind(PokemonRepositoryInterface::class, EloquentPokemonRepository::class);
         $this->app->bind(SearchPokemonRequestDTOFactoryInterface::class, SearchPokemonRequestDTOFactory::class);
         $this->app->bind(SearchPokemonByNameUseCaseInterface::class, SearchPokemonByNameUseCase::class);
         $this->app->bind(SearchPokemonByTypeUseCaseInterface::class, SearchPokemonByTypeUseCase::class);
