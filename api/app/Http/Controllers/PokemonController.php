@@ -24,7 +24,7 @@ class PokemonController extends Controller
     {
         $pokemonRequest = [
             'page' => $resquest->query('page', 1),
-            'perPage' => $resquest->query('perPage', 10),
+            'perPage' => $resquest->query('perPage', 12),
         ];
 
         $pokemonRequestDTO = $this->pokemonRequestDTOFactoryInterface->create($pokemonRequest);
